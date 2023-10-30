@@ -190,92 +190,93 @@ metadata:
 	pvd := provider.NewDefaultDepProvider()
 	resFactory := pvd.GetResourceFactory()
 
-	resources := []*resource.Resource{
-		resFactory.FromMapWithName("dply1", map[string]interface{}{
-			"apiVersion": "apps/v1",
-			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
-				"name":      "foo-dply1-bar",
-				"namespace": "ns1",
-				"labels": map[string]interface{}{
+	r1, _ := resFactory.FromMapWithName("dply1", map[string]interface{}{
+		"apiVersion": "apps/v1",
+		"kind":       "Deployment",
+		"metadata": map[string]interface{}{
+			"name":      "foo-dply1-bar",
+			"namespace": "ns1",
+			"labels": map[string]interface{}{
+				"app": "nginx",
+			},
+			"annotations": map[string]interface{}{
+				"note": "This is a test annotation",
+			},
+		},
+		"spec": map[string]interface{}{
+			"replica": "3",
+			"selector": map[string]interface{}{
+				"matchLabels": map[string]interface{}{
 					"app": "nginx",
 				},
-				"annotations": map[string]interface{}{
-					"note": "This is a test annotation",
-				},
 			},
-			"spec": map[string]interface{}{
-				"replica": "3",
-				"selector": map[string]interface{}{
-					"matchLabels": map[string]interface{}{
-						"app": "nginx",
-					},
-				},
-				"template": map[string]interface{}{
-					"metadata": map[string]interface{}{
-						"annotations": map[string]interface{}{
-							"note": "This is a test annotation",
-						},
-						"labels": map[string]interface{}{
-							"app": "nginx",
-						},
-					},
-				},
-			},
-		}),
-		resFactory.FromMapWithName("ns1", map[string]interface{}{
-			"apiVersion": "v1",
-			"kind":       "Namespace",
-			"metadata": map[string]interface{}{
-				"name": "ns1",
-				"labels": map[string]interface{}{
-					"app": "nginx",
-				},
-				"annotations": map[string]interface{}{
-					"note": "This is a test annotation",
-				},
-			},
-		}),
-		resFactory.FromMapWithName("literalConfigMap",
-			map[string]interface{}{
-				"apiVersion": "v1",
-				"kind":       "ConfigMap",
+			"template": map[string]interface{}{
 				"metadata": map[string]interface{}{
-					"name":      "foo-literalConfigMap-bar-g5f6t456f5",
-					"namespace": "ns1",
-					"labels": map[string]interface{}{
-						"app": "nginx",
-					},
 					"annotations": map[string]interface{}{
 						"note": "This is a test annotation",
 					},
-				},
-				"data": map[string]interface{}{
-					"DB_USERNAME": "admin",
-					"DB_PASSWORD": "somepw",
-				},
-			}),
-		resFactory.FromMapWithName("secret",
-			map[string]interface{}{
-				"apiVersion": "v1",
-				"kind":       "Secret",
-				"metadata": map[string]interface{}{
-					"name":      "foo-secret-bar-82c2g5f8f6",
-					"namespace": "ns1",
 					"labels": map[string]interface{}{
 						"app": "nginx",
 					},
-					"annotations": map[string]interface{}{
-						"note": "This is a test annotation",
-					},
 				},
-				"type": ifc.SecretTypeOpaque,
-				"data": map[string]interface{}{
-					"DB_USERNAME": base64.StdEncoding.EncodeToString([]byte("admin")),
-					"DB_PASSWORD": base64.StdEncoding.EncodeToString([]byte("somepw")),
-				},
-			}),
-	}
+			},
+		},
+	})
+
+	r2, _ := resFactory.FromMapWithName("ns1", map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "Namespace",
+		"metadata": map[string]interface{}{
+			"name": "ns1",
+			"labels": map[string]interface{}{
+				"app": "nginx",
+			},
+			"annotations": map[string]interface{}{
+				"note": "This is a test annotation",
+			},
+		},
+	})
+
+	r3, _ := resFactory.FromMapWithName("literalConfigMap", map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "ConfigMap",
+		"metadata": map[string]interface{}{
+			"name":      "foo-literalConfigMap-bar-g5f6t456f5",
+			"namespace": "ns1",
+			"labels": map[string]interface{}{
+				"app": "nginx",
+			},
+			"annotations": map[string]interface{}{
+				"note": "This is a test annotation",
+			},
+		},
+		"data": map[string]interface{}{
+			"DB_USERNAME": "admin",
+			"DB_PASSWORD": "somepw",
+		},
+	})
+
+	r4, _ := resFactory.FromMapWithName("secret", map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "Secret",
+		"metadata": map[string]interface{}{
+			"name":      "foo-secret-bar-82c2g5f8f6",
+			"namespace": "ns1",
+			"labels": map[string]interface{}{
+				"app": "nginx",
+			},
+			"annotations": map[string]interface{}{
+				"note": "This is a test annotation",
+			},
+		},
+		"type": ifc.SecretTypeOpaque,
+		"data": map[string]interface{}{
+			"DB_USERNAME": base64.StdEncoding.EncodeToString([]byte("admin")),
+			"DB_PASSWORD": base64.StdEncoding.EncodeToString([]byte("somepw")),
+		},
+	})
+
+	resources := []*resource.Resource{r1, r2, r3, r4}
 
 	expected := resmap.New()
 	for _, r := range resources {
@@ -350,30 +351,43 @@ metadata:
 	pvd := provider.NewDefaultDepProvider()
 	resFactory := pvd.GetResourceFactory()
 
-	resources := []*resource.Resource{
-		resFactory.FromMapWithName("deployment1", map[string]interface{}{
-			"apiVersion": "apps/v1",
-			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
-				"name":      "foo-deployment1-bar",
-				"namespace": "ns1",
-			},
-		}), resFactory.FromMapWithName("config", map[string]interface{}{
-			"apiVersion": "v1",
-			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
-				"name":      "config-bar",
-				"namespace": "ns1",
-			},
-		}), resFactory.FromMapWithName("secret", map[string]interface{}{
-			"apiVersion": "v1",
-			"kind":       "Secret",
-			"metadata": map[string]interface{}{
-				"name":      "foo-secret",
-				"namespace": "ns1",
-			},
-		}),
+	res1, err := resFactory.FromMapWithName("deployment1", map[string]interface{}{
+		"apiversion": "apps/v1",
+		"kind":       "deployment",
+		"metadata": map[string]interface{}{
+			"name":      "foo-deployment1-bar",
+			"namespace": "ns1",
+		},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
 	}
+
+	res2, err := resFactory.FromMapWithName("deployment1", map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "ConfigMap",
+		"metadata": map[string]interface{}{
+			"name":      "config-bar",
+			"namespace": "ns1",
+		},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
+	}
+
+	res3, err := resFactory.FromMapWithName("deployment1", map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "Secret",
+		"metadata": map[string]interface{}{
+			"name":      "foo-secret",
+			"namespace": "ns1",
+		},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
+	}
+
+	resources := []*resource.Resource{res1, res2, res3}
 
 	expected := resmap.New()
 	for _, r := range resources {

@@ -273,7 +273,7 @@ kind: List
 			},
 		},
 	}
-	testDeploymentA := factory.FromMap(
+	testDeploymentA, _ := factory.FromMap(
 		map[string]interface{}{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
@@ -282,7 +282,7 @@ kind: List
 			},
 			"spec": testDeploymentSpec,
 		})
-	testDeploymentB := factory.FromMap(
+	testDeploymentB, _ := factory.FromMap(
 		map[string]interface{}{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",

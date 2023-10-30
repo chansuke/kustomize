@@ -19,7 +19,7 @@ import (
 
 var factory = provider.NewDefaultDepProvider().GetResourceFactory()
 
-var testConfigMap = factory.FromMap(
+var testConfigMap, _ = factory.FromMap(
 	map[string]interface{}{
 		"apiVersion": "v1",
 		"kind":       "ConfigMap",
@@ -32,7 +32,7 @@ var testConfigMap = factory.FromMap(
 //nolint:gosec
 const configMapAsString = `{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"winnie","namespace":"hundred-acre-wood"}}`
 
-var testDeployment = factory.FromMap(
+var testDeployment, _ = factory.FromMap(
 	map[string]interface{}{
 		"apiVersion": "apps/v1",
 		"kind":       "Deployment",
@@ -102,7 +102,7 @@ func TestResourceId(t *testing.T) {
 }
 
 func TestDeepCopy(t *testing.T) {
-	r := factory.FromMap(
+	r, _ := factory.FromMap(
 		map[string]interface{}{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
